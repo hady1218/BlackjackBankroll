@@ -214,55 +214,67 @@ function renderRound() {
     const canSplit =
       canActOnHand && availableBalance >= bet.amount
 
-    // Bouton Double (plus de checkbox)
-    const doubleBtn = document.createElement("button")
-    doubleBtn.textContent = "Double"
-    doubleBtn.style.marginLeft = "10px"
-    doubleBtn.disabled = !canDouble
-    doubleBtn.onclick = () => requestDouble(i)
-    li.appendChild(doubleBtn)
+   // Bouton Double (plus de checkbox)
+const doubleBtn = document.createElement("button")
+doubleBtn.textContent = "Double"
+doubleBtn.disabled = !canDouble
+doubleBtn.className = "result-btn result-bj"
+doubleBtn.onclick = () => requestDouble(i)
 
-    const resultDisabled = !!bet.outcome
+const resultDisabled = !!bet.outcome
 
-    const btnLost = document.createElement("button")
-    btnLost.textContent = "Perdu"
-    btnLost.disabled = resultDisabled
-    btnLost.className = "result-btn result-lost"
-    btnLost.onclick = () => setBetOutcome(i, "lost")
-    
-    const btnBust = document.createElement("button")
-    btnBust.textContent = "Bust"
-    btnBust.disabled = resultDisabled
-    btnBust.className = "result-btn result-bust"
-    btnBust.onclick = () => setBetOutcome(i, "bust")
-    
-    const btnWon = document.createElement("button")
-    btnWon.textContent = "Gagné"
-    btnWon.disabled = resultDisabled
-    btnWon.className = "result-btn result-won"
-    btnWon.onclick = () => setBetOutcome(i, "won")
-    
-    const btnBJ = document.createElement("button")
-    btnBJ.textContent = "Blackjack"
-    btnBJ.disabled = resultDisabled
-    btnBJ.className = "result-btn result-bj"
-    btnBJ.onclick = () => setBetOutcome(i, "blackjack")
-    
-    const btnPush = document.createElement("button")
-    btnPush.textContent = "Push"
-    btnPush.disabled = resultDisabled
-    btnPush.className = "result-btn result-push"
-    btnPush.onclick = () => setBetOutcome(i, "push")
-    
-    const btnSplit = document.createElement("button")
-    btnSplit.textContent = "Split"
-    btnSplit.disabled = !canSplit
-    btnSplit.className = "result-btn result-won"   // tu peux changer si tu veux autre couleur
-    btnSplit.onclick = () => requestSplit(i)
-    
+const btnLost = document.createElement("button")
+btnLost.textContent = "Perdu"
+btnLost.disabled = resultDisabled
+btnLost.className = "result-btn result-lost"
+btnLost.onclick = () => setBetOutcome(i, "lost")
 
-    li.append(" — ", btnLost, btnBust, btnWon, btnBJ, btnPush, btnSplit)
-    betsList.appendChild(li)
+const btnBust = document.createElement("button")
+btnBust.textContent = "Bust"
+btnBust.disabled = resultDisabled
+btnBust.className = "result-btn result-bust"
+btnBust.onclick = () => setBetOutcome(i, "bust")
+
+const btnWon = document.createElement("button")
+btnWon.textContent = "Gagné"
+btnWon.disabled = resultDisabled
+btnWon.className = "result-btn result-won"
+btnWon.onclick = () => setBetOutcome(i, "won")
+
+const btnBJ = document.createElement("button")
+btnBJ.textContent = "Blackjack"
+btnBJ.disabled = resultDisabled
+btnBJ.className = "result-btn result-bj"
+btnBJ.onclick = () => setBetOutcome(i, "blackjack")
+
+const btnPush = document.createElement("button")
+btnPush.textContent = "Push"
+btnPush.disabled = resultDisabled
+btnPush.className = "result-btn result-push"
+btnPush.onclick = () => setBetOutcome(i, "push")
+
+const btnSplit = document.createElement("button")
+btnSplit.textContent = "Split"
+btnSplit.disabled = !canSplit
+btnSplit.className = "result-btn result-won"
+btnSplit.onclick = () => requestSplit(i)
+
+// petit conteneur pour aligner proprement les boutons
+const buttonsContainer = document.createElement("span")
+buttonsContainer.style.marginLeft = "8px"
+buttonsContainer.append(
+  doubleBtn,
+  btnLost,
+  btnBust,
+  btnWon,
+  btnBJ,
+  btnPush,
+  btnSplit
+)
+
+li.append(" — ", buttonsContainer)
+betsList.appendChild(li)
+
   }
 }
 

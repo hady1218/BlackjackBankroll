@@ -128,10 +128,9 @@ function renderRound() {
         // Bouton Double (plus de checkbox)
         const doubleBtn = document.createElement("button");
         doubleBtn.textContent = "Double";
-        doubleBtn.style.marginLeft = "10px";
         doubleBtn.disabled = !canDouble;
+        doubleBtn.className = "result-btn result-bj";
         doubleBtn.onclick = () => requestDouble(i);
-        li.appendChild(doubleBtn);
         const resultDisabled = !!bet.outcome;
         const btnLost = document.createElement("button");
         btnLost.textContent = "Perdu";
@@ -161,9 +160,13 @@ function renderRound() {
         const btnSplit = document.createElement("button");
         btnSplit.textContent = "Split";
         btnSplit.disabled = !canSplit;
-        btnSplit.className = "result-btn result-won"; // tu peux changer si tu veux autre couleur
+        btnSplit.className = "result-btn result-won";
         btnSplit.onclick = () => requestSplit(i);
-        li.append(" — ", btnLost, btnBust, btnWon, btnBJ, btnPush, btnSplit);
+        // petit conteneur pour aligner proprement les boutons
+        const buttonsContainer = document.createElement("span");
+        buttonsContainer.style.marginLeft = "8px";
+        buttonsContainer.append(doubleBtn, btnLost, btnBust, btnWon, btnBJ, btnPush, btnSplit);
+        li.append(" — ", buttonsContainer);
         betsList.appendChild(li);
     }
 }
