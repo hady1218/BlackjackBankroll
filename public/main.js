@@ -26,20 +26,31 @@ function renderPlayers() {
         const li = document.createElement("li");
         li.style.marginBottom = "4px";
         const colorDot = document.createElement("span");
-        colorDot.style.display = "inline-block";
-        colorDot.style.width = "10px";
-        colorDot.style.height = "10px";
-        colorDot.style.borderRadius = "50%";
-        colorDot.style.marginRight = "6px";
+        colorDot.className = "player-dot";
         colorDot.style.backgroundColor = p.color || "#888";
         const textSpan = document.createElement("span");
         textSpan.textContent = `${p.name} – solde: ${p.balance}`;
+        // Est-ce que ce joueur a misé dans la manche en cours ?
+        let hasBet = false;
+        if (currentRound) {
+            hasBet = currentRound.bets.some(b => b.playerId === p.id);
+        }
+        const badgesContainer = document.createElement("span");
+        badgesContainer.style.marginLeft = "6px";
+        if (hasBet) {
+            const badge = document.createElement("span");
+            badge.className = "badge-bet";
+            badge.textContent = "Mise placée";
+            badgesContainer.appendChild(badge);
+        }
         const kickBtn = document.createElement("button");
         kickBtn.textContent = "Virer";
-        kickBtn.style.marginLeft = "8px";
+        kickBtn.className = "btn btn-outline btn-sm";
+        kickBtn.style.marginLeft = "auto";
         kickBtn.onclick = () => kickPlayer(p.id);
         li.appendChild(colorDot);
         li.appendChild(textSpan);
+        li.appendChild(badgesContainer);
         li.appendChild(kickBtn);
         playersList.appendChild(li);
     }
@@ -125,26 +136,32 @@ function renderRound() {
         const btnLost = document.createElement("button");
         btnLost.textContent = "Perdu";
         btnLost.disabled = resultDisabled;
+        btnLost.className = "result-btn result-lost";
         btnLost.onclick = () => setBetOutcome(i, "lost");
         const btnBust = document.createElement("button");
         btnBust.textContent = "Bust";
         btnBust.disabled = resultDisabled;
+        btnBust.className = "result-btn result-bust";
         btnBust.onclick = () => setBetOutcome(i, "bust");
         const btnWon = document.createElement("button");
         btnWon.textContent = "Gagné";
         btnWon.disabled = resultDisabled;
+        btnWon.className = "result-btn result-won";
         btnWon.onclick = () => setBetOutcome(i, "won");
         const btnBJ = document.createElement("button");
         btnBJ.textContent = "Blackjack";
         btnBJ.disabled = resultDisabled;
+        btnBJ.className = "result-btn result-bj";
         btnBJ.onclick = () => setBetOutcome(i, "blackjack");
         const btnPush = document.createElement("button");
         btnPush.textContent = "Push";
         btnPush.disabled = resultDisabled;
+        btnPush.className = "result-btn result-push";
         btnPush.onclick = () => setBetOutcome(i, "push");
         const btnSplit = document.createElement("button");
         btnSplit.textContent = "Split";
         btnSplit.disabled = !canSplit;
+        btnSplit.className = "result-btn result-won"; // tu peux changer si tu veux autre couleur
         btnSplit.onclick = () => requestSplit(i);
         li.append(" — ", btnLost, btnBust, btnWon, btnBJ, btnPush, btnSplit);
         betsList.appendChild(li);

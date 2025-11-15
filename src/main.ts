@@ -227,32 +227,39 @@ function renderRound() {
     const btnLost = document.createElement("button")
     btnLost.textContent = "Perdu"
     btnLost.disabled = resultDisabled
+    btnLost.className = "result-btn result-lost"
     btnLost.onclick = () => setBetOutcome(i, "lost")
-
+    
     const btnBust = document.createElement("button")
     btnBust.textContent = "Bust"
     btnBust.disabled = resultDisabled
+    btnBust.className = "result-btn result-bust"
     btnBust.onclick = () => setBetOutcome(i, "bust")
-
+    
     const btnWon = document.createElement("button")
     btnWon.textContent = "Gagné"
     btnWon.disabled = resultDisabled
+    btnWon.className = "result-btn result-won"
     btnWon.onclick = () => setBetOutcome(i, "won")
-
+    
     const btnBJ = document.createElement("button")
     btnBJ.textContent = "Blackjack"
     btnBJ.disabled = resultDisabled
+    btnBJ.className = "result-btn result-bj"
     btnBJ.onclick = () => setBetOutcome(i, "blackjack")
-
+    
     const btnPush = document.createElement("button")
     btnPush.textContent = "Push"
     btnPush.disabled = resultDisabled
+    btnPush.className = "result-btn result-push"
     btnPush.onclick = () => setBetOutcome(i, "push")
-
+    
     const btnSplit = document.createElement("button")
     btnSplit.textContent = "Split"
     btnSplit.disabled = !canSplit
+    btnSplit.className = "result-btn result-won"   // tu peux changer si tu veux autre couleur
     btnSplit.onclick = () => requestSplit(i)
+    
 
     li.append(" — ", btnLost, btnBust, btnWon, btnBJ, btnPush, btnSplit)
     betsList.appendChild(li)

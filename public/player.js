@@ -6,6 +6,7 @@ let playerNameGlobal = null;
 let playerBalance = null;
 let playerCurrentRound = null;
 let playersAtTable = [];
+let gameRules = null;
 function byIdPlayer(id) {
     const el = document.getElementById(id);
     if (!el)
@@ -62,6 +63,17 @@ function renderRoundStatus() {
     else {
         roundStatusLabel.textContent = playerCurrentRound.status;
     }
+}
+function renderRules() {
+    const rulesLabel = document.getElementById("rules-label");
+    if (!rulesLabel)
+        return;
+    if (!gameRules) {
+        rulesLabel.textContent = "Règles : non disponibles.";
+        return;
+    }
+    rulesLabel.textContent =
+        `Règles : mise min ${gameRules.minBet} · mise max ${gameRules.maxBet} · solde initial ${gameRules.startingBalance}`;
 }
 function renderPlayersAtTable() {
     const ul = byIdPlayer("players-list-player");
@@ -132,10 +144,23 @@ function handlePlayerMessage(msg) {
         }
         playersAtTable = msg.players || [];
         playerCurrentRound = msg.round || null;
+        // Règles envoyées par le serveur
+        if (msg.rules) {
+            gameRules = msg.rules;
+        }
         renderPlayerInfo();
         renderRoundStatus();
         renderPlayersAtTable();
-        betStatus.textContent = "";
+        renderRules();
+        // Mise déjà placée ?
+        const betStatus = byIdPlayer("bet-status");
+        if (hasPlayerBetInCurrentRound()) {
+            betStatus.style.color = "#4ade80"; // vert
+            betStatus.textContent = "Mise enregistrée pour cette manche ✅";
+        }
+        else {
+            betStatus.textContent = "";
+        }
         updateBetControlsEnabled();
         return;
     }
