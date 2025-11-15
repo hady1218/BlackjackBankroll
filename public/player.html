@@ -1,152 +1,503 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <style>
-          body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 12px;
-          }
-      
-          section {
-            margin-bottom: 16px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-          }
-      
-          h1 {
-            font-size: 1.4rem;
-            text-align: center;
-          }
-      
-          h2 {
-            font-size: 1.1rem;
-            margin-bottom: 6px;
-          }
-      
-          label {
-            display: block;
-            margin: 4px 0;
-          }
-      
-          input[type="text"],
-          input[type="number"] {
-            padding: 4px 6px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-          }
-      
-          button {
-            padding: 4px 8px;
-            margin-top: 6px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            cursor: pointer;
-          }
-      
-          #chips-container {
-            margin-top: 8px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-          }
-      
-          .chip-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            border: none;
-            font-weight: bold;
-            font-size: 0.9rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-          }
-      
-          .chip-10 { background-color: #e0e0e0; }
-          .chip-25 { background-color: #c0e8ff; }
-          .chip-50 { background-color: #ffe0b3; }
-          .chip-100 { background-color: #ffd6e8; }
-      
-          #clear-bet-btn {
-            margin-left: 8px;
-            font-size: 0.8rem;
-          }
-        </style>
-        <title>Blackjack Bankroll - Joueur</title>
-      </head>
-      
+<head>
+  <meta charset="UTF-8">
+  <title>Blackjack Bankroll – Joueur</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    :root {
+      --bg-color: #020617;
+      --card-bg: #020617;
+      --card-soft: #020617;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.14);
+      --accent-strong: #16a34a;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-subtle: #1f2937;
+      --chip-blue: #3b82f6;
+      --chip-yellow: #facc15;
+      --chip-red: #ef4444;
+      --chip-purple: #a855f7;
+      --radius-lg: 18px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #020617 48%, #020617 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: 10px 8px 12px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .top-bar {
+      background: linear-gradient(135deg, #020617, #020617, #0b1120);
+      border-radius: var(--radius-lg);
+      border: 1px solid #1f2937;
+      padding: 8px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.75);
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .title-block h1 {
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #f9fafb;
+    }
+
+    .title-block p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.74rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid #1f2937;
+      white-space: nowrap;
+    }
+
+    .pill strong {
+      font-weight: 600;
+    }
+
+    .pill .code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      padding: 1px 7px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.12);
+      color: #6ee7b7;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .connection-status-text {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .connection-status-text span {
+      font-weight: 500;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, #020617 0, #020617 45%, #020617 100%);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      padding: 10px 12px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.85);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .card-header h2 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #e5e7eb;
+    }
+
+    .card-header small {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      background: #020617;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      padding: 6px 9px;
+      font-size: 0.8rem;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.35);
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 6px 11px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #020617;
+      box-shadow: 0 10px 24px rgba(34, 197, 94, 0.55);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #374151;
+      color: var(--text-main);
+    }
+
+    .btn-sm {
+      padding: 4px 9px;
+      font-size: 0.74rem;
+    }
+
+    .btn:disabled {
+      background: #111827 !important;
+      color: #6b7280 !important;
+      border-color: #1f2937 !important;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.6);
+      filter: brightness(1.05);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+      filter: brightness(0.97);
+    }
+
+    .connection-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .helper-text {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .player-info-line {
+      font-size: 0.78rem;
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-muted);
+    }
+
+    .player-info-line strong {
+      color: var(--text-main);
+    }
+
+    #players-list-player {
+      list-style: none;
+      margin-top: 4px;
+      max-height: 140px;
+      overflow-y: auto;
+      padding-right: 2px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.76rem;
+    }
+
+    #players-list-player li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 7px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid #0f172a;
+    }
+
+    .player-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+
+    .bet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    #round-status-label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    #bet-amount-input {
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .chips-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .chip-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #0b1120;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    }
+
+    .chip-btn[data-amount="10"] {
+      background: radial-gradient(circle at 30% 20%, #bfdbfe 0, #3b82f6 40%, #1d4ed8 100%);
+    }
+
+    .chip-btn[data-amount="25"] {
+      background: radial-gradient(circle at 30% 20%, #fef3c7 0, #facc15 40%, #ca8a04 100%);
+    }
+
+    .chip-btn[data-amount="50"] {
+      background: radial-gradient(circle at 30% 20%, #fee2e2 0, #ef4444 40%, #b91c1c 100%);
+    }
+
+    .chip-btn[data-amount="100"] {
+      background: radial-gradient(circle at 30% 20%, #ede9fe 0, #a855f7 40%, #7e22ce 100%);
+    }
+
+    .chip-btn[data-amount="500"] {
+      background: radial-gradient(circle at 30% 20%, #dcfce7 0, #22c55e 40%, #15803d 100%);
+    }
+
+    .chip-btn:disabled {
+      opacity: 0.3;
+      filter: grayscale(0.3);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .chip-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.9);
+      filter: brightness(1.05);
+    }
+
+    .chip-btn:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.85);
+    }
+
+    #bet-status {
+      font-size: 0.74rem;
+      margin-top: 4px;
+      min-height: 14px;
+    }
+
+    @media (min-width: 480px) {
+      body {
+        padding-top: 18px;
+      }
+    }
+  </style>
+</head>
 <body>
-  <h1>Blackjack Bankroll – Joueur</h1>
+  <div class="app">
+    <header class="top-bar">
+      <div class="top-row">
+        <div class="title-block">
+          <h1>Blackjack Bankroll</h1>
+          <p>Interface joueur · mise & bankroll</p>
+        </div>
+        <div class="pill">
+          <span>Table</span>
+          <span class="code" id="table-code-display">----</span>
+        </div>
+      </div>
+      <div class="connection-status-text">
+        État : <span id="connection-status">Non connecté.</span>
+      </div>
+    </header>
 
-  <!-- CONNEXION -->
-  <section id="connection-section">
-    <h2>Connexion à une table</h2>
+    <main>
+      <!-- Connexion -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Connexion</h2>
+          <small>Rejoindre la table du croupier</small>
+        </div>
+        <div>
+          <label>
+            Ton pseudo
+            <input type="text" id="player-name-input" placeholder="Ton pseudo joueur">
+          </label>
 
-    <section id="players-at-table">
-      <h2>Joueurs à la table</h2>
-      <ul id="players-list-player"></ul>
-    </section>
-    
+          <label>
+            Code de la table
+            <input type="text" id="table-code-input" placeholder="Ex: K7Q2">
+          </label>
 
-    <label>
-      Pseudo :
-      <input type="text" id="player-name-input" placeholder="Sami">
-    </label>
-    <br>
-    <label>
-      Code de la table :
-      <input type="text" id="table-code-input" placeholder="ABCD">
-    </label>
-    <br>
-    <button id="connect-join-btn">Se connecter & rejoindre</button>
+          <div class="connection-actions">
+            <button class="btn btn-primary" id="connect-join-btn">
+              Se connecter à la table
+            </button>
+            <p class="helper-text">
+              Demande le code au croupier. Il s’affiche dans sa vue croupier.
+            </p>
+          </div>
+        </div>
+      </section>
 
-    <p id="connection-status" style="color: blue;"></p>
-  </section>
+      <!-- Infos joueur & autres joueurs -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Joueurs à la table</h2>
+          <small>Banques visibles en temps réel</small>
+        </div>
+        <div>
+          <div class="player-info-line">
+            <span>Tu es :</span>
+            <span><strong id="player-name-label">-</strong></span>
+          </div>
+          <div class="player-info-line" style="margin-top:2px;">
+            <span>Ton solde :</span>
+            <span><strong id="player-balance-label">-</strong> crédits</span>
+          </div>
 
-  <hr>
+          <ul id="players-list-player">
+            <!-- rempli dynamiquement -->
+          </ul>
+        </div>
+      </section>
 
-  <!-- INFO JOUEUR -->
-  <section id="player-info-section">
-    <h2>Infos joueur</h2>
-    <p>
-      Nom : <strong><span id="player-name-label">-</span></strong>
-    </p>
-    <p>
-      Solde : <strong><span id="player-balance-label">-</span></strong>
-    </p>
-  </section>
+      <!-- Mises -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Mise de la manche</h2>
+          <small>Jetons virtuels, cartes réelles</small>
+        </div>
+        <div>
+          <div class="bet-header">
+            <div>
+              <span style="font-size:0.75rem; color:var(--text-muted);">État de la manche :</span><br>
+              <span id="round-status-label">Aucune information</span>
+            </div>
+          </div>
 
-  <hr>
+          <label>
+            Montant de ta mise
+            <input type="number" id="bet-amount-input" placeholder="0">
+          </label>
 
-  <!-- MISES -->
-  <section id="bet-section">
-    <h2>Mise pour la manche en cours</h2>
-    <p>
-      Statut de la manche :
-      <strong><span id="round-status-label">Inconnu</span></strong>
-    </p>
+          <div class="chips-row">
+            <button class="chip-btn" data-amount="10">10</button>
+            <button class="chip-btn" data-amount="25">25</button>
+            <button class="chip-btn" data-amount="50">50</button>
+            <button class="chip-btn" data-amount="100">100</button>
+            <button class="chip-btn" data-amount="500">500</button>
+          </div>
 
-    <label>
-      Montant à miser :
-      <input type="number" id="bet-amount-input" placeholder="50">
-    </label>
-    <button id="place-bet-btn">Placer la mise</button>
-    <button id="clear-bet-btn">Effacer</button>
-    
-    <div id="chips-container">
-      <button class="chip-btn chip-10" data-amount="10">10</button>
-      <button class="chip-btn chip-25" data-amount="25">25</button>
-      <button class="chip-btn chip-50" data-amount="50">50</button>
-      <button class="chip-btn chip-100" data-amount="100">100</button>
-    </div>
-    
-    <p id="bet-status" style="color: purple;"></p>
-    
+          <div class="connection-actions" style="margin-top:8px;">
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-primary" id="place-bet-btn">
+                Placer la mise
+              </button>
+              <button class="btn btn-outline btn-sm" id="clear-bet-btn">
+                Effacer
+              </button>
+            </div>
+            <p id="bet-status"></p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
-  </section>
-
+  <script>
+    // petit confort visuel : refléter le code de table côté joueur
+    document.addEventListener("DOMContentLoaded", () => {
+      const codeInput = document.getElementById("table-code-input");
+      const codeDisplay = document.getElementById("table-code-display");
+      if (codeInput && codeDisplay) {
+        codeInput.addEventListener("input", () => {
+          const value = codeInput.value.trim().toUpperCase() || "----";
+          codeDisplay.textContent = value;
+        });
+      }
+    });
+  </script>
   <script src="player.js"></script>
 </body>
 </html>

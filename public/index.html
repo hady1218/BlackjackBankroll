@@ -2,143 +2,453 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <title>Blackjack Bankroll – Croupier</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <style>
- body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 12px;
-          }
-      
-          section {
-            margin-bottom: 16px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-          }
-      
-          h1 {
-            font-size: 1.4rem;
-            text-align: center;
-          }
-      
-          h2 {
-            font-size: 1.1rem;
-            margin-bottom: 6px;
-          }
-      
-          label {
-            display: block;
-            margin: 4px 0;
-          }
-      
-          input[type="text"],
-          input[type="number"] {
-            padding: 4px 6px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-          }
-      
-          button {
-            padding: 4px 8px;
-            margin-top: 6px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            cursor: pointer;
-          }
-      
-          #chips-container {
-            margin-top: 8px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-          }
-      
-          .chip-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            border: none;
-            font-weight: bold;
-            font-size: 0.9rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-          }
-      
-          .chip-10 { background-color: #e0e0e0; }
-          .chip-25 { background-color: #c0e8ff; }
-          .chip-50 { background-color: #ffe0b3; }
-          .chip-100 { background-color: #ffd6e8; }
-      
-          #clear-bet-btn {
-            margin-left: 8px;
-            font-size: 0.8rem;
-          }
+    :root {
+      --bg-color: #050810;
+      --card-bg: #111827;
+      --card-bg-soft: #0b1220;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.12);
+      --accent-strong: #16a34a;
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.15);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-subtle: #1f2937;
+      --chip-blue: #3b82f6;
+      --chip-yellow: #facc15;
+      --chip-red: #ef4444;
+      --chip-purple: #a855f7;
+      --radius-lg: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #111827 0, #020617 45%, #020617 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: 12px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, #020617, #020617, #0f172a);
+      border-radius: var(--radius-lg);
+      padding: 10px 16px;
+      border: 1px solid #1f2937;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
+    }
+
+    .title-block h1 {
+      font-size: 1.1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #f9fafb;
+    }
+
+    .title-block p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .table-code-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #374151;
+    }
+
+    .table-code-pill span.code {
+      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.12);
+      color: #6ee7b7;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .status-text {
+      font-size: 0.75rem;
+      margin-top: 2px;
+      color: var(--text-muted);
+    }
+
+    .status-text span {
+      font-weight: 500;
+    }
+
+    .connection-ok {
+      color: var(--accent);
+    }
+
+    .connection-bad {
+      color: var(--danger);
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: 12px;
+    }
+
+    @media (max-width: 800px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, #111827 0, #020617 55%, #020617 100%);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 18px 35px rgba(0, 0, 0, 0.65);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .card-header h2 {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #e5e7eb;
+    }
+
+    .card-header small {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      background: #020617;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      color: var(--text-main);
+      outline: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.3);
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+      color: #0b1120;
+      box-shadow: 0 8px 20px rgba(34, 197, 94, 0.4);
+    }
+
+    .btn-primary:disabled {
+      background: #1f2937;
+      color: #6b7280;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid #374151;
+      color: var(--text-main);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      color: #fee2e2;
+    }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 0.75rem;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+      filter: brightness(1.05);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.45);
+      filter: brightness(0.97);
+    }
+
+    #setup-section .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+      align-items: center;
+    }
+
+    #reset-table-btn {
+      margin-top: 4px;
+    }
+
+    .section-body {
+      font-size: 0.8rem;
+    }
+
+    #players-list,
+    #bets-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 6px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    #players-list li,
+    #bets-list li {
+      font-size: 0.8rem;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid #111827;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    #bets-list li {
+      border-radius: 10px;
+    }
+
+    .player-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      margin-right: 2px;
+      flex-shrink: 0;
+    }
+
+    .bet-buttons {
+      margin-left: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .bet-buttons button {
+      border-radius: 999px;
+      font-size: 0.7rem;
+      padding: 3px 7px;
+      border: none;
+      cursor: pointer;
+      background: #020617;
+      color: #e5e7eb;
+      border: 1px solid #1f2937;
+      transition: all 0.12s ease;
+    }
+
+    .bet-buttons button:hover:not(:disabled) {
+      background: #111827;
+      border-color: #4b5563;
+    }
+
+    .bet-buttons button:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .round-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid #1f2937;
+    }
+
+    #round-status-label {
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    .helper-text {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    #connection-status {
+      font-size: 0.75rem;
+      margin-top: 4px;
+    }
   </style>
-  
-  <title>Blackjack Bankroll - Croupier</title>
 </head>
 <body>
-  <h1>Blackjack Bankroll – Croupier</h1>
+  <div class="app">
+    <header class="top-bar">
+      <div class="title-block">
+        <h1>Blackjack Bankroll</h1>
+        <p>Interface croupier · gestion des mises & résultats</p>
+      </div>
+      <div>
+        <div class="table-code-pill">
+          <span>Code table</span>
+          <span class="code" id="table-code-label">-</span>
+        </div>
+        <div class="status-text">
+          État : <span id="connection-status" class="connection-bad">Non connecté.</span>
+        </div>
+      </div>
+    </header>
 
-  <!-- CONNEXION & TABLE -->
-  <section id="setup-section">
-    <h2>Connexion & table</h2>
-  
-    <label>
-      Pseudo croupier :
-      <input type="text" id="dealer-name-input" placeholder="Ton pseudo">
-    </label>
-  
-    <label>
-      Mise minimale :
-      <input type="number" id="min-bet-input" value="10">
-    </label>
-  
-    <label>
-      Mise maximale :
-      <input type="number" id="max-bet-input" value="500">
-    </label>
-  
-    <label>
-      Solde initial des joueurs :
-      <input type="number" id="starting-balance-input" value="1000">
-    </label>
-  
-    <button id="connect-create-btn">Se connecter & créer la table</button>
-  
-    <p>Code de table : <span id="table-code-label">-</span></p>
-    <p id="connection-status" style="color: gray;">Non connecté.</p>
-  </section>
-  
+    <main class="main-grid">
+      <!-- Colonne gauche : setup & joueurs -->
+      <section class="card" id="setup-section">
+        <div class="card-header">
+          <h2>Configuration de la table</h2>
+          <small>Création du salon & règles</small>
+        </div>
+        <div class="section-body">
+          <label>
+            Pseudo croupier
+            <input type="text" id="dealer-name-input" placeholder="Ton pseudo">
+          </label>
 
-  <hr>
+          <label>
+            Mise minimale
+            <input type="number" id="min-bet-input" value="10">
+          </label>
 
-  <!-- JOUEURS -->
-  <section id="players-section">
-    <h2>Joueurs à la table</h2>
-    <button id="reset-table-btn">Réinitialiser la table (bankrolls)</button>
-    <ul id="players-list">
-      <!-- rempli dynamiquement -->
-    </ul>
-  </section>
-  
+          <label>
+            Mise maximale
+            <input type="number" id="max-bet-input" value="500">
+          </label>
 
-  <hr>
+          <label>
+            Solde initial des joueurs
+            <input type="number" id="starting-balance-input" value="1000">
+          </label>
 
-  <!-- MANCHE & MISES -->
-  <section id="round-section">
-    <h2>Manche en cours</h2>
-    <p>
-      Statut de la manche :
-      <strong><span id="round-status-label">Aucune manche</span></strong>
-    </p>
-    <button id="start-round-btn">Démarrer une nouvelle manche</button>
+          <div class="actions">
+            <button class="btn btn-primary" id="connect-create-btn">
+              Créer / connecter la table
+            </button>
+          </div>
 
-    <h3>Mises actuelles</h3>
-    <ul id="bets-list">
-      <!-- rempli dynamiquement -->
-    </ul>
-  </section>
+          <p class="helper-text">
+            Après la création de la table, partage le code avec tes joueurs. Ils se connectent
+            via l’interface joueur sur <strong>/player.html</strong>.
+          </p>
+        </div>
+      </section>
+
+      <!-- Colonne droite : joueurs & manches -->
+      <section class="card">
+        <div class="card-header">
+          <h2>Joueurs & manches</h2>
+          <small>Suivi des bankrolls & des mises</small>
+        </div>
+
+        <div class="section-body" id="players-section">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+            <div>
+              <strong>Joueurs connectés</strong>
+              <p class="helper-text">Kick & reset n’affectent pas la connexion croupier.</p>
+            </div>
+            <button class="btn btn-outline btn-sm" id="reset-table-btn">
+              Réinitialiser les bankrolls
+            </button>
+          </div>
+
+          <ul id="players-list">
+            <!-- rempli dynamiquement -->
+          </ul>
+        </div>
+
+        <hr style="border:none; border-top:1px solid #1f2937; margin:10px 0;">
+
+        <div class="section-body" id="round-section">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px;">
+            <div class="round-pill">
+              <span>Manche :</span>
+              <span id="round-status-label">Aucune manche</span>
+            </div>
+            <button class="btn btn-primary btn-sm" id="start-round-btn">
+              Démarrer une nouvelle manche
+            </button>
+          </div>
+          <p class="helper-text">
+            Démarre la manche une fois que tout le monde est prêt à miser.
+          </p>
+
+          <ul id="bets-list">
+            <!-- rempli dynamiquement -->
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
 
   <script src="main.js"></script>
 </body>
