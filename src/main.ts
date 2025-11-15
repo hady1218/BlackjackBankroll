@@ -258,7 +258,7 @@ btnSplit.textContent = "Split"
 btnSplit.disabled = !canSplit
 btnSplit.className = "result-btn result-won"
 btnSplit.onclick = () => requestSplit(i)
-
+ 
 // petit conteneur pour aligner proprement les boutons
 const buttonsContainer = document.createElement("span")
 buttonsContainer.style.marginLeft = "8px"
@@ -271,6 +271,7 @@ buttonsContainer.append(
   btnPush,
   btnSplit
 )
+
 
 li.append(" — ", buttonsContainer)
 betsList.appendChild(li)
