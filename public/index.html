@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <style>
+ body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 12px;
+          }
+      
+          section {
+            margin-bottom: 16px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+          }
+      
+          h1 {
+            font-size: 1.4rem;
+            text-align: center;
+          }
+      
+          h2 {
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+          }
+      
+          label {
+            display: block;
+            margin: 4px 0;
+          }
+      
+          input[type="text"],
+          input[type="number"] {
+            padding: 4px 6px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+          }
+      
+          button {
+            padding: 4px 8px;
+            margin-top: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+          }
+      
+          #chips-container {
+            margin-top: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+          }
+      
+          .chip-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+          }
+      
+          .chip-10 { background-color: #e0e0e0; }
+          .chip-25 { background-color: #c0e8ff; }
+          .chip-50 { background-color: #ffe0b3; }
+          .chip-100 { background-color: #ffd6e8; }
+      
+          #clear-bet-btn {
+            margin-left: 8px;
+            font-size: 0.8rem;
+          }
+  </style>
+  
+  <title>Blackjack Bankroll - Croupier</title>
+</head>
+<body>
+  <h1>Blackjack Bankroll – Croupier</h1>
+
+  <!-- CONNEXION & TABLE -->
+  <section id="setup-section">
+    <h2>Connexion & table</h2>
+  
+    <label>
+      Pseudo croupier :
+      <input type="text" id="dealer-name-input" placeholder="Ton pseudo">
+    </label>
+  
+    <label>
+      Mise minimale :
+      <input type="number" id="min-bet-input" value="10">
+    </label>
+  
+    <label>
+      Mise maximale :
+      <input type="number" id="max-bet-input" value="500">
+    </label>
+  
+    <label>
+      Solde initial des joueurs :
+      <input type="number" id="starting-balance-input" value="1000">
+    </label>
+  
+    <button id="connect-create-btn">Se connecter & créer la table</button>
+  
+    <p>Code de table : <span id="table-code-label">-</span></p>
+    <p id="connection-status" style="color: gray;">Non connecté.</p>
+  </section>
+  
+
+  <hr>
+
+  <!-- JOUEURS -->
+  <section id="players-section">
+    <h2>Joueurs à la table</h2>
+    <button id="reset-table-btn">Réinitialiser la table (bankrolls)</button>
+    <ul id="players-list">
+      <!-- rempli dynamiquement -->
+    </ul>
+  </section>
+  
+
+  <hr>
+
+  <!-- MANCHE & MISES -->
+  <section id="round-section">
+    <h2>Manche en cours</h2>
+    <p>
+      Statut de la manche :
+      <strong><span id="round-status-label">Aucune manche</span></strong>
+    </p>
+    <button id="start-round-btn">Démarrer une nouvelle manche</button>
+
+    <h3>Mises actuelles</h3>
+    <ul id="bets-list">
+      <!-- rempli dynamiquement -->
+    </ul>
+  </section>
+
+  <script src="main.js"></script>
+</body>
+</html>
