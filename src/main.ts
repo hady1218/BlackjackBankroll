@@ -24,7 +24,13 @@ interface TableStateMessage {
   tableCode: string
   players: PlayerState[]
   round: RoundState | null
+  rules?: {
+    minBet: number
+    maxBet: number
+    startingBalance: number
+  }
 }
+
 
 interface TableCreatedMessage {
   type: "table_created"
@@ -88,28 +94,43 @@ function renderPlayers() {
     li.style.marginBottom = "4px"
 
     const colorDot = document.createElement("span")
-    colorDot.style.display = "inline-block"
-    colorDot.style.width = "10px"
-    colorDot.style.height = "10px"
-    colorDot.style.borderRadius = "50%"
-    colorDot.style.marginRight = "6px"
+    colorDot.className = "player-dot"
     colorDot.style.backgroundColor = p.color || "#888"
 
     const textSpan = document.createElement("span")
     textSpan.textContent = `${p.name} – solde: ${p.balance}`
 
+    // Est-ce que ce joueur a misé dans la manche en cours ?
+    let hasBet = false
+    if (currentRound) {
+      hasBet = currentRound.bets.some(b => b.playerId === p.id)
+    }
+
+    const badgesContainer = document.createElement("span")
+    badgesContainer.style.marginLeft = "6px"
+
+    if (hasBet) {
+      const badge = document.createElement("span")
+      badge.className = "badge-bet"
+      badge.textContent = "Mise placée"
+      badgesContainer.appendChild(badge)
+    }
+
     const kickBtn = document.createElement("button")
     kickBtn.textContent = "Virer"
-    kickBtn.style.marginLeft = "8px"
+    kickBtn.className = "btn btn-outline btn-sm"
+    kickBtn.style.marginLeft = "auto"
     kickBtn.onclick = () => kickPlayer(p.id)
 
     li.appendChild(colorDot)
     li.appendChild(textSpan)
+    li.appendChild(badgesContainer)
     li.appendChild(kickBtn)
 
     playersList.appendChild(li)
   }
 }
+
 
 // ---- Rendu UI manches/mises ----
 

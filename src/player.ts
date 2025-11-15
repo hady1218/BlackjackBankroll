@@ -1,3 +1,9 @@
+interface GameRules {
+  minBet: number
+  maxBet: number
+  startingBalance: number
+}
+
 interface PlayerState {
   id: string
   name: string
@@ -24,7 +30,9 @@ interface PlayerTableStateMessage {
   tableCode: string
   players: PlayerState[]
   round: RoundState | null
+  rules?: GameRules
 }
+
 
 interface PlayerJoinedTableMessage {
   type: "joined_table"
@@ -64,6 +72,8 @@ let playerNameGlobal: string | null = null
 let playerBalance: number | null = null
 let playerCurrentRound: RoundState | null = null
 let playersAtTable: PlayerState[] = []
+let gameRules: GameRules | null = null
+
 
 function byIdPlayer<T extends HTMLElement>(id: string): T {
   const el = document.getElementById(id)
@@ -130,6 +140,20 @@ function renderRoundStatus() {
     roundStatusLabel.textContent = playerCurrentRound.status
   }
 }
+
+function renderRules() {
+  const rulesLabel = document.getElementById("rules-label") as HTMLParagraphElement | null
+  if (!rulesLabel) return
+
+  if (!gameRules) {
+    rulesLabel.textContent = "Règles : non disponibles."
+    return
+  }
+
+  rulesLabel.textContent =
+    `Règles : mise min ${gameRules.minBet} · mise max ${gameRules.maxBet} · solde initial ${gameRules.startingBalance}`
+}
+
 
 function renderPlayersAtTable() {
   const ul = byIdPlayer<HTMLUListElement>("players-list-player")
@@ -208,26 +232,40 @@ function handlePlayerMessage(msg: PlayerIncomingMessage) {
 
   if (msg.type === "table_state") {
     playerCurrentTableCode = msg.tableCode
-
+  
     if (playerId) {
       const me = msg.players.find((p: PlayerState) => p.id === playerId)
       if (me) {
         playerBalance = me.balance
       }
     }
-
+  
     playersAtTable = msg.players || []
     playerCurrentRound = msg.round || null
-
+  
+    // Règles envoyées par le serveur
+    if (msg.rules) {
+      gameRules = msg.rules
+    }
+  
     renderPlayerInfo()
     renderRoundStatus()
     renderPlayersAtTable()
-
-    betStatus.textContent = ""
-
+    renderRules()
+  
+    // Mise déjà placée ?
+    const betStatus = byIdPlayer<HTMLParagraphElement>("bet-status")
+    if (hasPlayerBetInCurrentRound()) {
+      betStatus.style.color = "#4ade80" // vert
+      betStatus.textContent = "Mise enregistrée pour cette manche ✅"
+    } else {
+      betStatus.textContent = ""
+    }
+  
     updateBetControlsEnabled()
     return
   }
+  
 
   console.log("Message inconnu côté joueur:", msg)
 }

@@ -129,6 +129,7 @@ function broadcastTableState(table) {
     tableCode: table.code,
     players: playersPublic,
     round: roundInfo,
+    rules: session.rules, // 🔥 on ajoute les règles ici
   })
 
   if (table.dealer.readyState === WebSocket.OPEN) {
@@ -140,6 +141,7 @@ function broadcastTableState(table) {
     }
   }
 }
+
 
 function handleDisconnect(ws) {
   const info = clientInfo.get(ws)
